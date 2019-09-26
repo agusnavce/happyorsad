@@ -1,7 +1,8 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import * as tf from '@tensorflow/tfjs';
 
-const MINST_MODEL_URl = 'https://raw.githubusercontent.com/agusnavce/happyorsad/master/model/model.json';
+const MINST_MODEL_URl =
+  'https://raw.githubusercontent.com/agusnavce/happyorsad/master/model/model.json';
 const INPUT_PIXEL_SIZE = 28;
 
 export function DrawingBoard({ width, height }) {
@@ -13,15 +14,16 @@ export function DrawingBoard({ width, height }) {
   const [isLoading, setIsLoading] = useState(true);
 
   const getImageDataAndScale = (canvas, outputSize) => {
-    // let scaled = document.createElement('canvas');
-    // let scaledCtx = scaled.getContext('2d');
-    // scaled.width = outputSize.width;
-    // scaled.height = outputSize.height;
-    // scaledCtx.drawImage(canvas, 0, 0, outputSize.width, outputSize.height);
-    // return scaledCtx.getImageData(0, 0, outputSize.width, outputSize.height);
+    let scaled = document.createElement('canvas');
+    let scaledCtx = scaled.getContext('2d');
+    scaled.width = outputSize.width;
+    scaled.height = outputSize.height;
+    scaledCtx.drawImage(canvas, 0, 0, outputSize.width, outputSize.height);
+    return scaledCtx.getImageData(0, 0, outputSize.width, outputSize.height);
   };
   const loadModel = useCallback(async () => {
-    await tf.loadLayersModel(MINST_MODEL_URl);
+    const model = await tf.loadLayersModel(MINST_MODEL_URl);
+    setModel(model);
   }, []);
 
   useEffect(() => {
@@ -31,24 +33,27 @@ export function DrawingBoard({ width, height }) {
 
   const predict = useCallback(
     async imageData => {
-      console.log('predict');
-      // await tf.tidy(() => {
-      //   const pixSize = INPUT_PIXEL_SIZE;
-      //   let img = tf.browser.fromPixels(imageData, 1);
-      //   img = img.reshape([1, pixSize, pixSize, 1]);
-      //   img = tf.cast(img, 'float32');
-      //   img = img.div(tf.scalar(255));
-
-      //   const output = model.predict(img);
-      //   setPredictions(Array.from(output.dataSync()));
-      // });
+      if (model) {
+        await tf.tidy(() => {
+          const pixSize = INPUT_PIXEL_SIZE;
+          let img = tf.browser.fromPixels(imageData, 1);
+          img = img.reshape([1, pixSize, pixSize, 1]);
+          img = tf.cast(img, 'float32');
+          img = img.div(tf.scalar(255));
+          console.log(model);
+          const output = model.predict(img);
+          console.log(output);
+          setPredictions(Array.from(output.dataSync()));
+        });
+      }
     },
     [model]
   );
 
   const makePrediction = useCallback(async () => {
     const pixSize = INPUT_PIXEL_SIZE;
-    let image = getImageDataAndScale(canvasRef, {
+    const canvas = canvasRef.current;
+    let image = getImageDataAndScale(canvas, {
       width: pixSize,
       height: pixSize
     });
