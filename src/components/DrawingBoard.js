@@ -1,15 +1,19 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { useStateValue } from '../state/store';
+import { Button } from 'semantic-ui-react';
 import * as tf from '@tensorflow/tfjs';
 
 const MINST_MODEL_URl =
   'https://raw.githubusercontent.com/agusnavce/happyorsad/master/model/model.json';
 const INPUT_PIXEL_SIZE = 28;
+const DRAWING_BOARD_BASE_DIM = 400;
 
 export function DrawingBoard({ width, height }) {
   const canvasRef = useRef(null);
+  const boardWrapperRef = useRef(null);
   const [isPainting, setIsPainting] = useState(false);
   const [mousePosition, setMousePosition] = useState(undefined);
-  const [predictions, setPredictions] = useState([]);
+  const [, dispatch] = useStateValue();
   const [model, setModel] = useState(undefined);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -24,11 +28,29 @@ export function DrawingBoard({ width, height }) {
   const loadModel = useCallback(async () => {
     const model = await tf.loadLayersModel(MINST_MODEL_URl);
     setModel(model);
-  }, []);
+    setIsLoading(false);
+  }, [setIsLoading]);
+
+  const setUpCanvas = () => {
+    if (canvasRef.current && boardWrapperRef.current) {
+      const canvas = canvasRef.current;
+      const boardWrapper = boardWrapperRef.current;
+
+      const boardWrapperRect = boardWrapper.getBoundingClientRect();
+
+      if (boardWrapperRect.width >= boardWrapperRect.height) {
+        canvas.width = boardWrapperRect.height;
+        canvas.height = boardWrapperRect.height;
+      } else {
+        canvas.width = boardWrapperRect.width;
+        canvas.height = boardWrapperRect.width;
+      }
+    }
+  };
 
   useEffect(() => {
+    setUpCanvas();
     loadModel();
-    setIsLoading(false);
   }, [loadModel]);
 
   const predict = useCallback(
@@ -40,14 +62,15 @@ export function DrawingBoard({ width, height }) {
           img = img.reshape([1, pixSize, pixSize, 1]);
           img = tf.cast(img, 'float32');
           img = img.div(tf.scalar(255));
-          console.log(model);
           const output = model.predict(img);
-          console.log(output);
-          setPredictions(Array.from(output.dataSync()));
+          dispatch({
+            type: 'predictions',
+            payload: Array.from(output.dataSync())
+          });
         });
       }
     },
-    [model]
+    [model, dispatch]
   );
 
   const makePrediction = useCallback(async () => {
@@ -58,14 +81,13 @@ export function DrawingBoard({ width, height }) {
       height: pixSize
     });
     await predict(image);
-    setPredictions(predictions);
-  }, [predict, predictions, setPredictions]);
+  }, [predict]);
 
   useEffect(() => {
-    if (!isPainting) {
+    if (!isPainting && !isLoading) {
       makePrediction();
     }
-  }, [isPainting, makePrediction]);
+  }, [isPainting, isLoading, makePrediction]);
 
   const startPaint = useCallback(event => {
     const coordinates = getCoordinates(event);
@@ -157,7 +179,7 @@ export function DrawingBoard({ width, height }) {
     if (context) {
       context.strokeStyle = 'white';
       context.lineJoin = 'round';
-      context.lineWidth = 5;
+      context.lineWidth = 10;
 
       context.beginPath();
       context.moveTo(originalMousePosition.x, originalMousePosition.y);
@@ -170,7 +192,7 @@ export function DrawingBoard({ width, height }) {
 
   return (
     <div className="DrawingBoard">
-      <div className="BoardWrapper">
+      <div className="BoardWrapper" ref={boardWrapperRef}>
         <canvas
           className="Board"
           ref={canvasRef}
@@ -178,7 +200,9 @@ export function DrawingBoard({ width, height }) {
           width={width}
         />
       </div>
-      <button onClick={clearCanvas}>Clear</button>
+      <Button primary onClick={clearCanvas}>
+        Clear
+      </Button>
     </div>
   );
 }

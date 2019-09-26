@@ -1,29 +1,3 @@
-.DrawingBoard {
-  flex: 0 0 100%;
-  display: flex;
-  flex-direction: column;
-  flex-wrap: nowrap;
-  justify-content: center;
-  align-content: space-around;
-  align-items: center;
-  user-select: none;
-  touch-action: none;
-  background-color: #fff;
-  width: 50%;
-}
-.DrawingBoard .BoardWrapper {
-  display: flex;
-  flex-direction: column;
-  flex-wrap: nowrap;
-  justify-content: center;
-  align-content: space-around;
-  align-items: center;
-  transition: 0s 180s;
-  font-size: 30px;
-  color: rgba(255, 255, 255, 0.3);
-  flex: 1 1 100%;
-
-}
 .DrawingBoard .BoardWrapper .Board {
   background-color: #000;
 }

@@ -1,0 +1,46 @@
+@import url(
+  https://fonts.googleapis.com/css?family=Open+Sans:400,
+  800,
+  700,
+  300
+);
+@import url(https://fonts.googleapis.com/css?family=Squada+One);
+
+
+.Header .Logo {
+  font-family: 'Open Sans', sans-serif;
+  color: #555;
+  text-decoration: none;
+  text-transform: uppercase;
+  font-size: 150px;
+  font-weight: 800;
+  letter-spacing: -3px;
+  line-height: 1;
+  text-shadow: #ededed 3px 2px 0;
+  position: relative;
+}
+.Header .Logo:after {
+  content: 'happy or sad';
+  position: absolute;
+  left: -9px;
+  top: 12px;
+}
+.Header .Logo:after {
+  background-image: -webkit-linear-gradient(
+    left top,
+    transparent 0%,
+    transparent 25%,
+    #555 25%,
+    #555 50%,
+    transparent 50%,
+    transparent 75%,
+    #555 75%
+  );
+  background-size: 4px 4px;
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  z-index: -5;
+  display: block;
+  text-shadow: none;
+}
