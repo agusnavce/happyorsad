@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import * as tf from '@tensorflow/tfjs';
 
-const MINST_MODEL_URl = '';
+const MINST_MODEL_URl = 'https://raw.githubusercontent.com/agusnavce/happyorsad/master/model/model.json';
 const INPUT_PIXEL_SIZE = 28;
 
 export function DrawingBoard({ width, height }) {
