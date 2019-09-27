@@ -6,9 +6,8 @@ import * as tf from '@tensorflow/tfjs';
 const MINST_MODEL_URl =
   'https://raw.githubusercontent.com/agusnavce/happyorsad/master/model/model.json';
 const INPUT_PIXEL_SIZE = 28;
-const DRAWING_BOARD_BASE_DIM = 400;
 
-export function DrawingBoard({ width, height }) {
+export function DrawingBoard() {
   const canvasRef = useRef(null);
   const boardWrapperRef = useRef(null);
   const [isPainting, setIsPainting] = useState(false);
@@ -193,12 +192,7 @@ export function DrawingBoard({ width, height }) {
   return (
     <div className="DrawingBoard">
       <div className="BoardWrapper" ref={boardWrapperRef}>
-        <canvas
-          className="Board"
-          ref={canvasRef}
-          height={height}
-          width={width}
-        />
+        <canvas className="Board" ref={canvasRef} height={341} width={341} />
       </div>
       <Button primary onClick={clearCanvas}>
         Clear

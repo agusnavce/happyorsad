@@ -1,0 +1,14 @@
+.PredictionBoard {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.PredictionBoard .Text {
+  font-size: 2em;
+  margin-top: 0.5em;
+  font-weight: bold;
+}

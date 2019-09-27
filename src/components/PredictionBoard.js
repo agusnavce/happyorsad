@@ -1,17 +1,12 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useStateValue } from '../state/store';
+import { Icon } from 'semantic-ui-react';
 
-const HAPPY_IMAGE =
-  'https://image.shutterstock.com/image-photo/happy-note-on-yellow-sticker-600w-142034761.jpg';
-const SAD_IMAGE =
-  'https://pbs.twimg.com/profile_images/811341743371194368/353_ttjx_400x400.jpg';
+const HAPPY_ICON = 'smile outline';
+const SAD_ICON = 'frown outline';
 
 export function PredictionBoard() {
   const [{ predictions }] = useStateValue();
-  const [previousPred, setPreviousPred] = useState({
-    prediction: undefined,
-    value: undefined
-  });
 
   const selectMood = predictions => {
     const [sad, happy] = predictions;
@@ -21,23 +16,21 @@ export function PredictionBoard() {
     } else {
       prediction = { prediction: 'sad', value: sad };
     }
-    // setPreviousPred(prediction);
     return prediction;
   };
   return (
     <div className="PredictionBoard">
       <div className="PredictionBoard-image">
-        <img
-          src={
+        <Icon
+          size="massive"
+          name={
             selectMood(predictions).prediction === 'happy'
-              ? HAPPY_IMAGE
-              : SAD_IMAGE
+              ? HAPPY_ICON
+              : SAD_ICON
           }
-          alt="Logo"
         />
       </div>
-      <div className="PredictionBoard-text">
-        {console.log(predictions)}
+      <div className="Text">
         {Math.trunc(selectMood(predictions).value * 100) || 80}%
       </div>
     </div>
